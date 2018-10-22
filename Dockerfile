@@ -32,4 +32,4 @@ ENV LC_ALL de_CH.UTF-8
 
 VOLUME ["/tftpboot", "/home/partimag"]
 EXPOSE 68/udp 111/udp 2049/tcp
-CMD ["/usr/sbin/drbl4imp -e -b -p 40"]
+CMD ["/usr/sbin/drbl4imp","-e","-b","-p 40"]
