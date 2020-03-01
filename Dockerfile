@@ -1,35 +1,26 @@
-FROM debian
-MAINTAINER leejoneshane@gmail.com
+FROM debian:buster
+LABEL maintainer=deanshannon3@gmail.com
 
 ENV DEBIAN_FRONTEND noninteractive
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US.utf-8
+ENV LC_ALL en_US.UTF-8
 
 RUN apt-get --fix-missing update \
-    && apt-get -y --no-install-recommends install zip unzip bzip2 pigz rsync disktype parted pciutils tcpdump \
-                  net-tools dialog bc gawk hdparm sdparm netcat file ethtool etherwake ssh syslinux isolinux pxelinux mtools \
-                  reiserfsprogs psmisc binutils apt-utils locales fonts-wqy-zenhei hime wget txt2html dosfstools tftpd-hpa \
-                  nfs-kernel-server nis curl lftp iptables memtest86+ ntfs-3g lvm2 genisoimage lshw hwinfo aoetools \
-                  vblade dmidecode lzma xz-utils pxz pixz lzip lbzip2 plzip lrzip pv hfsutils hfsprogs dmsetup \
-                  dmraid kpartx tofrodos dos2unix isc-dhcp-server gdisk btrfs-tools efibootmgr libxft2 libxmu6 \
-                  debconf-utils discover discover-data expect iproute iputils-ping kmod libdiscover2 libdrm-intel1 \
-                  libdrm-nouveau2 libdrm-radeon1 libdrm2 libelf1 libfontenc1 libfribidi0 libgl1-mesa-dri libgl1-mesa-glx \
-                  libglapi-mesa libgnutls-openssl27 libice6 libnewt0.52 libxmuu1 libxpm4 libxshmfence1 libxss1 \
-                  libpciaccess0 libsm6 libtcl8.6 libtk8.6 libtxc-dxtn-s2tc0 libutempter0 libx11-xcb1 libxt6 libxv1 \
-                  libxxf86dga1 libxxf86vm1 partimage patch tcl-expect tcl8.6 tk8.6 traceroute x11-utils xbitmaps xterm \
-                  libxaw7 libxcb-dri2-0 libxcb-dri3-0 libxcb-glx0 libxcb-present0 libxcb-shape0 libxcb-sync1 gnupg \
-    && echo "de_CH.UTF-8 UTF-8" > /etc/locale.gen \
-    && locale-gen "de_CH.UTF-8" \
-    && dpkg-reconfigure locales \
+    && apt-get -y --no-install-recommends install wget gnupg libnss3 \
     && echo "deb http://free.nchc.org.tw/debian/ jessie main" >> /etc/apt/sources.list \
     && echo "deb http://free.nchc.org.tw/drbl-core drbl stable" >> /etc/apt/sources.list \
     && wget -q http://drbl.nchc.org.tw/GPG-KEY-DRBL -O- | apt-key add - \
     && mkdir -p /run/sendsigs.omit.d \
-    && apt-get -y install drbl clonezilla partclone ipxe lzop pigz pbzip2 udpcast \
-    && apt-get clean all
-
-ENV LANG de_CH.UTF-8
-ENV LANGUAGE de_CH.utf-8
-ENV LC_ALL de_CH.UTF-8
+    && apt-get -y install drbl clonezilla partclone ipxe lzop pigz pbzip2 udpcast
+RUN apt-get clean all
+RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
+    && locale-gen "en_US.UTF-8" \
+    && dpkg-reconfigure locales
+RUN /usr/sbin/drbl4imp -e -b -p 40
 
 VOLUME ["/tftpboot", "/home/partimag"]
 EXPOSE 68/udp 111/udp 2049/tcp
-CMD ["/usr/sbin/drbl4imp","-e","-b","-p 40"]
+#CMD = ["/usr/sbin/drblpush", "-i"]
+
+    
